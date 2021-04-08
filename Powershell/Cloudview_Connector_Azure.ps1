@@ -8,26 +8,6 @@ $directoryId = $config.defaults.directoryId
 $applicationId = $config.defaults.applicationId
 $authenticationKey = $config.defaults.authenticationKey
 
-# TO BE REMOVED from "START HERE" to "END HERE" if you are using Powershell 6
-# STARTS HERE
-add-type @"
-using System.Net;
-using System.Security.Cryptography.X509Certificates;
-public class TrustAllCertsPolicy : ICertificatePolicy {
-    public bool CheckValidationResult(
-        ServicePoint srvPoint, X509Certificate certificate,
-        WebRequest request, int certificateProblem) {
-        return true;
-    }
-}
-"@
-$AllProtocols = [System.Net.SecurityProtocolType]'Tls11,Tls12'
-[System.Net.ServicePointManager]::SecurityProtocol = $AllProtocols
-[System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
-
-# TO BE REMOVED 
-# ENDS HERE
-
 function getSubscriptions($subscriptions)
 {
 	if (([IO.Path]::GetExtension($subscriptions)) -eq ".csv")
@@ -112,7 +92,7 @@ function AddConnector($subscriptionIds,$subscriptionName)
 		echo $body
 		Add-Content "Connector with below details" -Path $debugfile.Name
 		Add-Content $body -Path $debugfile.Name
-		$result = Invoke-RestMethod -Headers $headers -Uri $URI -Method Post -Body $body -SslProtocol Tls12  
+		$result = Invoke-RestMethod -Headers $headers -Uri $URI -Method Post -Body $body
 		Write-Host "StatusCode" $result.StatusCode
 		if ($debug -ne $null)
 		{
